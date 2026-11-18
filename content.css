@@ -1,0 +1,52 @@
+.huoshu-save-wrap {
+  display: flex;
+  align-items: center;
+}
+.huoshu-save-btn {
+  background: #2a3a2a !important;
+  color: #e8f5e8 !important;
+  border: 1px solid #4a7a4a !important;
+  border-radius: 999px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+  padding: 4px 11px !important;
+  margin: 4px 8px !important;
+  cursor: pointer !important;
+  font-family: "PingFang SC", "Hiragino Sans GB", system-ui, sans-serif !important;
+  letter-spacing: 0.04em !important;
+  white-space: nowrap !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 1px 2px rgba(0, 0, 0, 0.25) !important;
+}
+.huoshu-save-btn:hover:not(:disabled) {
+  background: #314531 !important;
+  color: #f4fff4 !important;
+}
+.huoshu-save-btn:disabled {
+  opacity: 0.85;
+  cursor: default !important;
+}
+.huoshu-save-btn--float {
+  position: absolute !important;
+  top: 8px !important;
+  right: 8px !important;
+  z-index: 5 !important;
+}
+
+/* X light theme: keep the green chip, add a darker edge so it doesn't wash out */
+html[data-color-scheme="light"] .huoshu-save-btn,
+body[style*="background-color: rgb(255"] .huoshu-save-btn {
+  background: #1f4a28 !important;
+  color: #f3fff3 !important;
+  border-color: #2e6b3e !important;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08) !important;
+}
+
+.huoshu-xhs-fab {
+  position: fixed !important;
+  right: 16px !important;
+  bottom: 88px !important;
+  z-index: 2147483646 !important;
+  margin: 0 !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,.28);
+}

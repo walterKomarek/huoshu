@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="活树" />
+  <title>活树 · 快捷存入</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100dvh;
+      background: #161310; color: #e8e0d4;
+      font: 16px/1.55 "PingFang SC", system-ui, sans-serif;
+      padding: 20px 18px calc(24px + env(safe-area-inset-bottom));
+    }
+    h1 { font-family: "Songti SC", serif; font-size: 22px; letter-spacing: .16em; font-weight: 500; margin: 8px 0 6px; }
+    p.lead { color: #9a8f82; font-size: 13.5px; margin: 0 0 12px; }
+    .chips { display: flex; gap: 8px; margin: 0 0 16px; }
+    .chip {
+      font-size: 12px; letter-spacing: .06em;
+      border: 1px solid #3d5a3d; color: #d7ebd7;
+      border-radius: 999px; padding: 3px 10px;
+    }
+    label { display: block; color: #9a8f82; font-size: 12px; letter-spacing: .08em; margin: 12px 0 6px; }
+    textarea, input {
+      width: 100%; background: #1f1a16; border: 1px solid #2a241e; color: #e8e0d4;
+      border-radius: 10px; padding: 12px; font: inherit;
+    }
+    textarea { min-height: 160px; resize: vertical; }
+    button {
+      width: 100%; margin-top: 16px; padding: 12px;
+      background: #2a3a2a; border: 1px solid #3d5a3d; color: #d7ebd7;
+      border-radius: 999px; font: inherit; letter-spacing: .1em;
+    }
+    button:disabled { opacity: .6; }
+    .ok { color: #7cb87c; margin-top: 12px; }
+    .err { color: #c4786a; margin-top: 12px; }
+    a { color: #7cb87c; }
+    h2 { font-size: 13px; color: #c4a574; letter-spacing: .12em; font-weight: 500; margin: 20px 0 8px; }
+    ol { color: #cfc4b6; font-size: 13.5px; padding-left: 1.2em; margin: 0 0 8px; }
+  </style>
+</head>
+<body>
+  <h1>活树</h1>
+  <p class="lead">手机分享的替代路径：复制帖子链接，粘到这里存入同一棵树。</p>
+  <div class="chips"><span class="chip">𝕏</span><span class="chip">小红书</span></div>
+  <p class="lead">App 官方分享列表加不进第三方。iPhone 系统浏览器也装不了本扩展；安卓可用 Kiwi 等支持扩展的浏览器，把本页添加到主屏幕。</p>
+  <label>分享内容或链接
+    <textarea id="blob" placeholder="粘贴 x.com / twitter.com 帖子链接，或小红书口令 / xhslink"></textarea>
+  </label>
+  <label>作者（可选）
+    <input id="author" placeholder="@handle 或名字" />
+  </label>
+  <button type="button" id="save">存入活树</button>
+  <p id="msg"></p>
+  <h2>𝕏</h2>
+  <ol>
+    <li>打开帖子 → 分享 → 复制链接</li>
+    <li>打开本页（主屏幕图标）</li>
+    <li>粘贴后点存入</li>
+  </ol>
+  <h2>小红书</h2>
+  <ol>
+    <li>笔记 → 分享 → 复制链接 / 复制口令</li>
+    <li>打开本页 → 粘贴 → 存入</li>
+  </ol>
+  <p class="lead"><a href="index.html">打开完整活树</a></p>
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const params = new URLSearchParams(location.search);
+    const shared = [params.get("url"), params.get("text"), params.get("title")].filter(Boolean).join("\n");
+    if (shared) $("blob").value = shared;
+
+    function guess(blob, author) {
+      const s = blob + " " + author;
+      if (/xiaohongshu\.com|xhslink\.com|小红书/.test(s)) {
+        return { source: "xhs", tags: ["小红书"], fallbackName: "小红书" };
+      }
+      if (/(?:x\.com|twitter\.com)\/[^/\s]+\/status\/\d+/i.test(s)) {
+        return { source: "x", tags: [], fallbackName: "" };
+      }
+      return { source: "paste", tags: [], fallbackName: "" };
+    }
+
+    $("save").addEventListener("click", () => {
+      const blob = $("blob").value.trim();
+      const author = $("author").value.trim();
+      if (!blob) { $("msg").className = "err"; $("msg").textContent = "先贴一段内容或链接"; return; }
+      if (!chrome?.runtime?.sendMessage) {
+        $("msg").className = "err";
+        $("msg").textContent = "请在已加载「活树」扩展的浏览器里打开本页。电脑用 Chrome；安卓可用 Kiwi 等。";
+        return;
+      }
+      const g = guess(blob, author);
+      let author_name = author;
+      let author_handle = "";
+      if (author.startsWith("@")) {
+        author_handle = author.slice(1);
+        author_name = author_handle;
+      }
+      $("save").disabled = true;
+      $("msg").className = "";
+      $("msg").textContent = "生长中…";
+      chrome.runtime.sendMessage({
+        type: "ingest",
+        payload: {
+          source: g.source,
+          text: blob,
+          url: "",
+          author_name: author_name || g.fallbackName,
+          author_handle,
+          tags: g.tags,
+        },
+      }, (res) => {
+        $("save").disabled = false;
+        if (chrome.runtime.lastError || !res || res.error) {
+          $("msg").className = "err";
+          $("msg").textContent = (res && res.error) || chrome.runtime.lastError?.message || "没存成";
+          return;
+        }
+        $("msg").className = "ok";
+        $("msg").textContent = res.deduped ? "这片叶子已经在树上。" : "已存入活树。";
+        if (!res.deduped) $("blob").value = "";
+      });
+    });
+  </script>
+</body>
+</html>

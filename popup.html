@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>活树</title>
+  <style>
+    :root { color-scheme: dark; }
+    body {
+      margin: 0;
+      width: 300px;
+      background: #161310;
+      color: #e8e0d4;
+      font: 13px/1.5 "PingFang SC", system-ui, sans-serif;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 14px 8px;
+      font-family: "Songti SC", "STSong", serif;
+      letter-spacing: 0.16em;
+      font-size: 16px;
+    }
+    ul { list-style: none; margin: 0; padding: 4px 0 8px; }
+    li {
+      padding: 8px 14px;
+      border-top: 1px solid #2a241e;
+      color: #cfc4b6;
+    }
+    li small { display: block; color: #c4a574; }
+    .empty { padding: 10px 14px; color: #9a8f82; }
+    button.open {
+      display: block;
+      width: calc(100% - 28px);
+      margin: 8px 14px 10px;
+      text-align: center;
+      color: #d7ebd7;
+      background: #2a3a2a;
+      border: 1px solid #3d5a3d;
+      border-radius: 999px;
+      padding: 7px 0;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      font: inherit;
+    }
+    button.open:hover { background: #314531; }
+    button.open.reload {
+      background: transparent;
+      border-color: #3a332c;
+      color: #cfc4b6;
+      margin-top: 0;
+    }
+    button.open.reload:hover {
+      background: #241e19;
+      border-color: #3d5a3d;
+      color: #d7ebd7;
+    }
+    .llm-box {
+      border-top: 1px solid #2a241e;
+      padding: 10px 14px 14px;
+    }
+    .llm-box h3 {
+      margin: 0 0 8px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      color: #9a8f82;
+    }
+    .llm-box label {
+      display: block;
+      color: #9a8f82;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+    .llm-box input, .llm-box select {
+      display: block;
+      width: 100%;
+      margin-top: 4px;
+      background: #181410;
+      border: 1px solid #2a241e;
+      border-radius: 6px;
+      padding: 6px 8px;
+      color: #e8e0d4;
+      font: inherit;
+      box-sizing: border-box;
+    }
+    .llm-box input:focus, .llm-box select:focus {
+      outline: none;
+      border-color: #3d4a38;
+    }
+    .llm-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 6px;
+    }
+    button.save-llm {
+      background: transparent;
+      border: 1px solid #2a241e;
+      color: #9a8f82;
+      font: inherit;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      padding: 2px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+    button.save-llm:hover {
+      color: #d7ebd7;
+      border-color: #3d5a3d;
+    }
+    .llm-status {
+      margin: 0;
+      color: #c4a574;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <svg viewBox="0 0 32 32" width="18" height="18" aria-hidden="true">
+      <path d="M16 26 V12" stroke="#7cb87c" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+      <path d="M16 20 L10 14 M16 17 L22 11" stroke="#7cb87c" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      <circle cx="16" cy="11" r="1.6" fill="#c4e0c4"/>
+    </svg>
+    活树
+  </header>
+  <div id="recent"></div>
+  <button type="button" class="open" id="openApp">打开活树</button>
+  <button type="button" class="open reload" id="reloadTabs">刷新已打开的活树页</button>
+  <button type="button" class="open reload" id="openMobile">打开手机快捷存入页</button>
+  <section class="llm-box">
+    <h3>对话</h3>
+    <label>对话模型
+      <select id="llmProvider">
+        <option value="deepseek">DeepSeek</option>
+        <option value="openai">OpenAI</option>
+        <option value="groq">Groq</option>
+        <option value="siliconflow">SiliconFlow</option>
+        <option value="custom">自定义</option>
+        <option value="none">暂不接模型</option>
+      </select>
+    </label>
+    <label>API Key
+      <input type="password" id="llmKey" autocomplete="off" spellcheck="false" />
+    </label>
+    <div id="customFields" hidden>
+      <label>Base URL
+        <input id="llmBase" placeholder="https://…" autocomplete="off" />
+      </label>
+      <label>Model
+        <input id="llmModel" placeholder="模型名" autocomplete="off" />
+      </label>
+    </div>
+    <div class="llm-actions">
+      <button type="button" class="save-llm" id="llmSave">保存</button>
+    </div>
+    <p class="llm-status" id="llmStatus"></p>
+  </section>
+  <section class="llm-box">
+    <h3>前沿来源 · 𝕏</h3>
+    <label>关注账号（逗号或换行分隔，浏览 𝕏 时自动收进前沿）
+      <textarea id="xHandles" rows="4" placeholder="adcock_brett, Figure_robot, UnitreeRobotics" style="width:100%;margin-top:4px;background:#181410;border:1px solid #2a241e;border-radius:6px;padding:6px 8px;color:#e8e0d4;font:inherit;box-sizing:border-box;resize:vertical;"></textarea>
+    </label>
+    <label>X API Bearer（可选，有则后台也能直接拉时间线）
+      <input type="password" id="xBearer" autocomplete="off" spellcheck="false" />
+    </label>
+    <div class="llm-actions">
+      <button type="button" class="save-llm" id="xSave">保存前沿源</button>
+    </div>
+    <p class="llm-status" id="xStatus"></p>
+  </section>
+  <script src="popup.js"></script>
+</body>
+</html>

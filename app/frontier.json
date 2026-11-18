@@ -1,0 +1,63 @@
+{
+  "as_of": "2026-08-20",
+  "window": "近三日（截至 8月20日）",
+  "note": "只收具身智能与 AI 领域可核实的论文/实验，不收教程。今天只有 4 条。",
+  "items": [
+    {
+      "id": "tau0-vla-2608.16885",
+      "date": "2026-08-17",
+      "who": "Jianlan Luo / 智元 Finch",
+      "role": "上海创智院 · Agibot Finch · 港中文",
+      "title": "τ0-VLA：用世界模型做测试时搜索的分层机器人基座模型",
+      "why": "4 万小时真机数据上的分层 VLA：高层子任务不再一次前向，而是用世界模型想象后果再 beam search；闭环长时域成功率随测试时计算明显上升。",
+      "url": "https://arxiv.org/abs/2608.16885",
+      "source": "arxiv",
+      "tags": [
+        "具身智能",
+        "VLA"
+      ]
+    },
+    {
+      "id": "hydra0-2608.18077",
+      "date": "2026-08-18",
+      "who": "Yilun Du, Yunzhu Li, George Konidaris, Stan Birchfield 等",
+      "role": "学界·世界模型 / 机器人控制",
+      "title": "Hydra-0：把动作写成像素流的通用世界模型",
+      "why": "用 pixel motion 当作跨本体的动作接口，一个世界模型同时做控制与预测；出现从人类示范的 object flow 反推机器人运动的 inverse mode。",
+      "url": "https://arxiv.org/abs/2608.18077",
+      "source": "arxiv",
+      "tags": [
+        "具身智能",
+        "世界模型"
+      ]
+    },
+    {
+      "id": "anthropic-protein-2026-08-18",
+      "date": "2026-08-18",
+      "who": "Anthropic",
+      "role": "前沿实验室（湿实验验证）",
+      "title": "Claude 自主设计蛋白 binder：15 个靶点中 14 个成功，命中率 22–35%（典型人工活动 10–15%）",
+      "why": "不是用法教程。Opus 4.8 / Mythos Preview 自主跑完 de novo binder 活动，Adaptyv 与 Twist 独立补造湻测；RBX1 上最强设计 KD 3.9 nM，好于开放赛冠军入。",
+      "url": "https://www.anthropic.com/research/Claude-accelerates-protein-design",
+      "source": "lab",
+      "tags": [
+        "AI",
+        "科学发现"
+      ]
+    },
+    {
+      "id": "gigabrain-wbc-05",
+      "date": "2026-08-18",
+      "who": "Jiwen Lu / GigaBrain",
+      "role": "GigaBrain · 清华",
+      "title": "GigaBrain-WBC-0.5：人形全身控制的行为世界模型",
+      "why": "把跟踪器升级为同时预测动作、状态与下一行为命令的 Behavior World Model；地形交互成功率约 4.3× 最强基线，摔倒恢复 99.3%。",
+      "url": "https://arxiv.org/abs/2608.18234",
+      "source": "arxiv",
+      "tags": [
+        "具身智能",
+        "人形"
+      ]
+    }
+  ]
+}
